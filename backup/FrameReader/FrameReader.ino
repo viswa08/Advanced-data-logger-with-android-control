@@ -37,6 +37,7 @@ DS3231  rtc(SDA, SCL);
 LSM303 compass;
 
 File myFile;
+File myFileOut;
 dht DHT;
 
 #define DHT11_PIN A0
@@ -159,18 +160,22 @@ void setup() {
   {
     
   // re-open the file for reading:
-  myFile = SD.open("star25.txt");
+  myFile = SD.open("star25.txt", FILE_READ);
   if (myFile) {
     //Serial.println("star25.txt:");
     //mySerial.println("star25.txt:");
-
+    
+    myFileOut = SD.open("archFile.txt", FILE_WRITE);
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
       //Serial.write(myFile.read());
       mySerial.write(myFile.read());
+      myFileOut.write(myFile.read());
     }
     // close the file:
     myFile.close();
+    myFileOut.close();
+    
   } else {
     // if the file didn't open, print an error:
     //Serial.println("error opening star25.txt");
