@@ -1,4 +1,3 @@
-
 /*
   SD card read/write
 
@@ -26,7 +25,7 @@
 #include <DS3231.h>
 
 #include <SoftwareSerial.h>
-SoftwareSerial mySerial(5, 6); // RX, TX
+SoftwareSerial mySerial(10, 11); // RX, TX
 
 // Init the DS3231 using the hardware interface
 DS3231  rtc(SDA, SCL);
@@ -51,6 +50,22 @@ char bluInput;               //bluetooth signal to read data from SD card
 String bluInputStr;
 
 float Xm, Ym, Zm, Xa, Ya, Za, roll, pitch, roll_print, pitch_print, Heading, fXm_comp, fYm_comp;
+ int r0 = 0;      //value of select pin at the 4051 (s0)
+
+  int r1 = 0;      //value of select pin at the 4051 (s1)
+
+  int r2 = 0;      //value of select pin at the 4051 (s2)
+
+  int sensorPin = A0;
+
+
+  int s0 = 2;
+
+  int s1 = 3;
+
+
+
+  int count = 0;   //which y pin we are selecting
 
 struct compassOp
 {
@@ -66,6 +81,9 @@ void setup() {
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
   //pinMode(4, OUTPUT);
+    pinMode(s0, OUTPUT);
+
+    pinMode(s1, OUTPUT);
 
   Wire.begin();
   compass.init();
@@ -101,11 +119,11 @@ void setup() {
     
       // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-  myFile = SD.open("star25.txt", FILE_WRITE);
+  myFile = SD.open("Details4.csv", FILE_WRITE);
 
   // if the file opened okay, write to it:
   if (myFile) {
-    //Serial.print("Writing to star25.txt...");
+    //Serial.print("Writing to Details4.csv...");
         //myFile.println("Type,\tHumidity(%),\tTemperature(C)");
         //myFile.print(rtc.getDOWStr());
         //myFile.print(" ");
@@ -134,7 +152,7 @@ void setup() {
     //Serial.println("done.");
   } else {
     // if the file didn't open, print an error:
-    Serial.println("error opening star25.txt");
+    Serial.println("error opening Details4.csv");
   }
   }
   void sdIni()
@@ -147,7 +165,7 @@ void setup() {
 
     Serial.print("Initializing SD card...");
   
-    if (!SD.begin(2)) {
+    if (!SD.begin(4)) {
       Serial.println("initialization failed!");
       return;
     }
@@ -159,10 +177,10 @@ void setup() {
   {
     
   // re-open the file for reading:
-  myFile = SD.open("star25.txt");
+  myFile = SD.open("Details4.csv");
   if (myFile) {
-    //Serial.println("star25.txt:");
-    //mySerial.println("star25.txt:");
+    //Serial.println("Details4.csv:");
+    //mySerial.println("Details4.csv:");
 
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
@@ -173,8 +191,8 @@ void setup() {
     myFile.close();
   } else {
     // if the file didn't open, print an error:
-    //Serial.println("error opening star25.txt");
-    mySerial.println("error opening star25.txt");
+    //Serial.println("error opening Details4.csv");
+    mySerial.println("error opening Details4.csv");
   }
   }
 
@@ -189,6 +207,7 @@ void loop() {
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
   if (buttonState == HIGH) {
     Serial.println("button pressed");
+     MuxVal();
     //head = compassSoft();
     sdWrite();
     //sdRead();    
@@ -206,6 +225,7 @@ void loop() {
   {
     delay(10);
     bluInput = mySerial.read();
+    Serial.println(bluInput);
     if(bluInput == '#')
     {
       //break;
@@ -214,9 +234,11 @@ void loop() {
   
     if (bluInputStr.length() >0)
     {
+      
       Serial.println(bluInputStr);
       if(bluInputStr == "a")
       {
+        
         sdRead();
       }
       bluInputStr="";
@@ -282,6 +304,44 @@ compOp.pitchOp = pitch_print;
 
 
 
+void MuxVal()
+{
+  for (count=0; count<=2; count++) {
+
+
+
+      // select the bit  
+
+      r0 = bitRead(count,0);    // use this with arduino 0013 (and newer versions)     
+
+      r1 = bitRead(count,1);    // use this with arduino 0013 (and newer versions)     
+
+
+
+
+
+      //r0 = count & 0x01;      // old version of setting the bits
+
+      //r1 = (count>>1) & 0x01;      // old version of setting the bits
+
+      //r2 = (count>>2) & 0x01;      // old version of setting the bits
+
+
+
+      digitalWrite(s0, r0);
+
+      digitalWrite(s1, r1);
+
+      int val = analogRead(sensorPin);    
+
+       Serial.print("the value of photodiode  ");
+       Serial.print(count);
+       Serial.print("\t");
+       Serial.println(val);
+
+    }  
+
+}
 
 
 
