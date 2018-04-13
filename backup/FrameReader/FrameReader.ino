@@ -1,4 +1,3 @@
-
 /*
   SD card read/write
 
@@ -284,9 +283,5 @@ compOp.pitchOp = pitch_print;
 
   delay(1000);
 }
-
-
-
-
 
 
