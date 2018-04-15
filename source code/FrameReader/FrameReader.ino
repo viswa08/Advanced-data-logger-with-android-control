@@ -49,17 +49,24 @@ float Xm, Ym, Zm, Xa, Ya, Za, roll, pitch, roll_print, pitch_print, Heading, fXm
 int r0 = 0;      //value of select pin at the 4052 (s0)
 int r1 = 0;      //value of select pin at the 4052 (s1)
 int r2 = 0;      //value of select pin at the 4052 (s2)
+int r3 = 0;
+int r4 = 0;
+int r5 = 0;
 int sensorPin = A0;
-int s0 = 2;
-int s1 = 3;
+int s0 = 22;
+int s1 = 23;
+int s2 = 24;
+int s3 = 25;
+int s4 = 26;
+int s5 = 270;
 int count = 0;   //which y pin we are selecting
-
+String fileName = "Details.csv";
 struct compassOp
 {
   float head, rollOp, pitchOp;
 };
 struct compassOp compOp;
-float compassSoft(); //function declaration for the structure to work. function has to be invoked before using structure in the function
+String compassSoft(); //function declaration for the structure to work. function has to be invoked before using structure in the function
 
 void setup() {
   Serial.begin(9600); //DEBUG
@@ -92,36 +99,30 @@ void sdIni()
     }    
 }
 
-void sdWrite(String sensorData)
+void sdWrite(String sensorData, String compassData)
 {    
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
   // if the file opened okay, write to it:
-  myFile = SD.open("Details5.csv", FILE_WRITE);
+  myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) 
   {
-    Serial.println("Writing to Details5.csv...");   //DEBUG     
-    compassSoft();
+    Serial.println("Writing to Details.csv...");   //DEBUG     
     myFile.print(rtc.getDateStr());
     myFile.print(",");
     myFile.print(rtc.getTimeStr());
     myFile.print(",");
     myFile.print(sensorData);
     //myFile.print(","); // to be removed
-    myFile.print(compOp.head/10);
-    //Serial.println(compOp.head/10); //DEBUG
-    myFile.print(",");
-    myFile.print(compOp.rollOp);
-    myFile.print(",");
-    myFile.println(compOp.pitchOp);
+    myFile.println(compassData);
     Serial.println("done.");//DEBUG
     myFile.close();// close the file
   } 
   else 
   {
     // if the file didn't open, print an error:
-    Serial.println("error opening Details5.csv");//DEBUG
-    mySerial.println("error opening Details5.csv");
+    Serial.println("error opening Details.csv");//DEBUG
+    mySerial.println("error opening Details.csv");
   }
 }
 
@@ -129,23 +130,50 @@ void sdRead()
 { 
   //Serial.begin(9600);//bluetooth
   // re-open the file for reading:
-  myFile = SD.open("Details5.csv");
-  if (myFile) 
+  if (SD.exists(fileName))
   {
-    Serial.println("Read from file."); //DEBUG
-    // read from the file until there's nothing else in it:
-    while (myFile.available()) 
+    myFile = SD.open(fileName);
+    File archiveFile;
+    if (myFile) 
     {
-      //Serial.write(myFile.read()); //DEBUG
-      mySerial.write(myFile.read());
+      Serial.println("Read from file."); //DEBUG
+      // read from the file until there's nothing else in it:
+      String d=rtc.getDateStr(FORMAT_SHORT);
+      String t=rtc.getTimeStr(FORMAT_SHORT);
+      String dateTime = (String)d[0]+(String)d[1]+(String)d[3]+(String)d[4]+(String)t[0]+(String)t[1]+(String)t[3]+(String)t[4];
+      String fileArchive = dateTime+".csv";
+      //Serial.println(fileArchive); //DEBUG
+      archiveFile = SD.open(fileArchive, FILE_WRITE);
+      if (archiveFile)
+      {
+        while (myFile.available()) 
+        {
+          char c = myFile.read();
+          //Serial.println(c); //DEBUG
+          archiveFile.print(c);
+          mySerial.write(c);
+        }
+        archiveFile.close();
+        myFile.close();// close the file
+        SD.remove(fileName);
+      }
+      else
+      {
+        //Serial.println("error creating archive");//DEBUG
+        mySerial.println("error creating archive");
+        myFile.close();// close the file
+      }
+    } 
+    else 
+    {
+      // if the file didn't open, print an error:
+      //Serial.println("error opening Details.csv");//DEBUG
+      mySerial.println("error opening Details.csv");
     }
-    myFile.close();// close the file
-  } 
-  else 
+  }
+  else
   {
-    // if the file didn't open, print an error:
-    //Serial.println("error opening Details5.csv");//DEBUG
-    mySerial.println("error opening Details5.csv");
+    mySerial.println("Details file not exist!");
   }
 }
 //sd card code ends here
@@ -158,7 +186,8 @@ void loop()
   {
     Serial.println("button pressed");//DEBUG
     String sensorData = MuxVal();
-    sdWrite(sensorData);   
+    String compassData = compassSoft();
+    sdWrite(sensorData,compassData);   
     // turn LED on:
     //digitalWrite(ledPin, HIGH);
     delay(500);    
@@ -190,8 +219,9 @@ void loop()
   }
 }
 
-float compassSoft()
+String compassSoft()
 {  
+  String compassData="";
   compass.read();
   
   //Magnetometer
@@ -222,7 +252,12 @@ float compassSoft()
   compOp.head = Heading;
   compOp.rollOp = roll_print;
   compOp.pitchOp = pitch_print;
+  
+  compassData+=(String)Heading;
+  compassData+=(String)roll_print;
+  compassData+=(String)pitch_print;
   delay(1000);
+  return compassData;
 }
 
 void MuxInit()
@@ -230,17 +265,26 @@ void MuxInit()
   //mux logic initialisation starts here
   pinMode(s0, OUTPUT);
   pinMode(s1, OUTPUT);
+  pinMode(s2, OUTPUT);
+  pinMode(s3, OUTPUT);
+  pinMode(s4, OUTPUT);
+  pinMode(s5, OUTPUT);
   //mux logic initialisation ends here
 }
 
 String MuxVal()
 {
   String muxOp="";
-  for (count=0; count<=2; count++) 
+  for (count=0; count<=44; count++) 
   {
       // select the bit
       r0 = bitRead(count,0);    // use this with arduino uno and mega (and newer versions)
-      r1 = bitRead(count,1);    // use this with arduino uno and mega (and newer versions)      
+      r1 = bitRead(count,1);    // use this with arduino uno and mega (and newer versions)
+      r2 = bitRead(count,2);
+      r3 = bitRead(count,3);
+      r4 = bitRead(count,4);
+      r5 = bitRead(count,5);
+            
 
       //r0 = count & 0x01;      // old version of setting the bits
       //r1 = (count>>1) & 0x01; // old version of setting the bits
@@ -248,6 +292,11 @@ String MuxVal()
 
       digitalWrite(s0, r0);
       digitalWrite(s1, r1);
+      digitalWrite(s2, r2);
+      digitalWrite(s3, r3);
+      digitalWrite(s4, r4);
+      digitalWrite(s5, r5);
+      
       int val = analogRead(sensorPin);    
       //Serial.print("the value of photodiode  ");//DEBUG
       //Serial.print(count);//DEBUG
