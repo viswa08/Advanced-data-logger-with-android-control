@@ -22,6 +22,19 @@
  * RTC module connection:
  * SDA - pin 20 (mega) [pin A4 - arduino uno]
  * SCL - pin 21 (mega) [pin A5 - arduino uno]
+ * 
+ * Selection bits connection
+ * S0 - pin 22
+ * S1 - pin 23
+ * S2 - pin 24
+ * S3 - pin 25
+ * S4 - pin 26
+ * S5 - pin 27
+ * 
+ * Sensor pin
+ * sensor In Pin - A0 
+ * 
+ * button pin - 7
 
  */
 
@@ -38,8 +51,8 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 LSM303 compass;
 File myFile;
 dht DHT;
-#define DHT11_PIN A0
-const int buttonPin = 8;     // the number of the pushbutton pin
+//#define DHT11_PIN A0
+const int buttonPin = 7;     // the number of the pushbutton pin
 //const int ledPin =  13;      // the number of the LED pin
 // variables will change:
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -58,7 +71,7 @@ int s1 = 23;
 int s2 = 24;
 int s3 = 25;
 int s4 = 26;
-int s5 = 270;
+int s5 = 27;
 int count = 0;   //which y pin we are selecting
 String fileName = "Details.csv";
 struct compassOp
