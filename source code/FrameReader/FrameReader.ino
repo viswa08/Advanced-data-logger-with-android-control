@@ -47,12 +47,12 @@
 #include <LSM303.h>
 
 DS3231  rtc(SDA, SCL);// Init the DS3231 using the hardware interface
-SoftwareSerial mySerial(10, 11); // RX, TX
+SoftwareSerial mySerial(68, 69); // RX, TX
 LSM303 compass;
 File myFile;
 dht DHT;
 //#define DHT11_PIN A0
-const int buttonPin = 7;     // the number of the pushbutton pin
+const int buttonPin = 14;     // the number of the pushbutton pin
 //const int ledPin =  13;      // the number of the LED pin
 // variables will change:
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -87,7 +87,7 @@ void setup() {
   //TODO: initialize the LED pin as an output:
   //pinMode(ledPin, OUTPUT);
   // initialize the pushbutton pin as an input:
-  pinMode(buttonPin, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
   Wire.begin();
   rtc.begin();// Initialize the rtc object
   compass.init();
@@ -193,9 +193,9 @@ void sdRead()
 
 void loop() 
 {
-  buttonState = digitalRead(buttonPin);
+  int sensorVal = digitalRead(buttonPin);
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == HIGH) 
+  if (sensorVal == LOW) 
   {
     Serial.println("button pressed");//DEBUG
     String sensorData = MuxVal();
@@ -320,4 +320,5 @@ String MuxVal()
     delay(250); // 
     return muxOp;
 }
+
 
