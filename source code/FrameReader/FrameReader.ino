@@ -8,8 +8,8 @@
  ** CS   - pin 4  [pin 2 - arduino uno]  
  *
  *HC 05 module connection:
- ** TX - pin 0 (default) [software serial pin 5 - arduino Mega and uno ]
- ** RX - pin 1 (default) [software serial pin 6 - arduino Mega and uno ]
+ ** TX - pin 0 (default) [software serial pin 14 - arduino Mega and uno ]
+ ** RX - pin 1 (default) [software serial pin 15 - arduino Mega and uno ]
  * 
  *  The circuit: 
  * RX is digital pin 5 (connect to TX of other device)
@@ -193,13 +193,13 @@ void sdRead()
 
 void loop() 
 {
-  int sensorVal = digitalRead(buttonPin);
+  int buttonVal = digitalRead(buttonPin);
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (sensorVal == LOW) 
+  if (buttonVal == LOW) 
   {
     Serial.println("button pressed");//DEBUG
-    String sensorData = MuxVal();
-    String compassData = compassSoft();
+    String sensorData = MuxVal();    
+    String compassData = " ";//compassSoft();    //change blank with function later
     sdWrite(sensorData,compassData);   
     // turn LED on:
     //digitalWrite(ledPin, HIGH);
