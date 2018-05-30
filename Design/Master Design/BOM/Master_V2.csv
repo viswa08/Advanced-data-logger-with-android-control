@@ -1,0 +1,17 @@
+"Part";"Value";"Device";"Package";"Description";"MF";"MPN";"OC_FARNELL";"OC_NEWARK";"SPICEPREFIX";
+"C1";"220uF";"CPOL-EUE5-10.5";"E5-10,5";"POLARIZED CAPACITOR, European symbol";"";"";"";"";"C";
+"C2";"1uF";"CPOL-EUE2.5-6";"E2,5-6";"POLARIZED CAPACITOR, European symbol";"";"";"";"";"C";
+"C3";"100nF";"C-EU050-030X075";"C050-030X075";"CAPACITOR, European symbol";"";"";"";"";"C";
+"C4";"220uF";"CPOL-EUE5-10.5";"E5-10,5";"POLARIZED CAPACITOR, European symbol";"";"";"";"";"C";
+"C5";"1uF";"CPOL-EUE2.5-6";"E2,5-6";"POLARIZED CAPACITOR, European symbol";"";"";"";"";"C";
+"C6";"100nF";"C-EU050-030X075";"C050-030X075";"CAPACITOR, European symbol";"";"";"";"";"C";
+"IC1";"7810TV";"7805TV";"TO220V";"Positive VOLTAGE REGULATOR";"";"";"";"";"";
+"IC2";"7805TV";"7805TV";"TO220V";"Positive VOLTAGE REGULATOR";"";"";"";"";"";
+"MEASURE_SW";"";"AK500/2";"AK500/2";"CONNECTOR";"";"";"unknown";"unknown";"";
+"MOD1";"WIRELESS-BLUETOOTH-HC-05";"WIRELESS-BLUETOOTH-HC-05";"WIRELESS-BLUETOOTH-HC-05";"Bluetooth Transceiver Module based on HC-05 board";"";"";"";"";"";
+"MOD3";"RTC-DS3231-AT24C32";"RTC-DS3231-AT24C32";"RTC-DS3231-AT24C32";"RTC Module with Battery and EEPROM based on DS3231 and AT24C32 chips";"";"";"";"";"";
+"PWR_SW";"";"AK500/2";"AK500/2";"CONNECTOR";"";"";"unknown";"unknown";"";
+"SV2";"";"FE20-2";"FE20-2";"FEMALE HEADER";"";"";"unknown";"unknown";"";
+"U$1";"LSM303DLHC";"LSM303DLHC";"LSM303DLHC";"LSM303dlhc module by pololu";"";"";"";"";"";
+"U$2";"MEGA_DEVICE";"MEGA_DEVICE";"MEGAOUTLINE";"mega card as device";"";"";"";"";"";
+"U$3";"SD-CARD-MODULE-KG072";"SD-CARD-MODULE-KG072";"SD-CARD-MODULE-KG072";"this is the KG072 sd card module";"";"";"";"";"";
